@@ -615,7 +615,9 @@ func (col *promCollector) UpdateVerifiedTtl(area geo.AreaName, seenType null.Str
 }
 
 func (col *promCollector) UpdateRaidCount(areas []geo.AreaName, raidLevel int64) {
-	processed := make(map[string]bool)
+	// One global observation, independent of overlapping geographic matches.
+	raidCount.WithLabelValues("world", strconv.FormatInt(raidLevel, 10)).Inc()
+	processed := map[string]bool{"world": true}
 	for _, area := range areas {
 		areaName := area.String()
 		if !processed[areaName] {
@@ -626,7 +628,9 @@ func (col *promCollector) UpdateRaidCount(areas []geo.AreaName, raidLevel int64)
 }
 
 func (col *promCollector) UpdateFortCount(areas []geo.AreaName, fortType string, changeType string) {
-	processed := make(map[string]bool)
+	// One global observation, independent of overlapping geographic matches.
+	fortCount.WithLabelValues("world", fortType, changeType).Inc()
+	processed := map[string]bool{"world": true}
 	for _, area := range areas {
 		areaName := area.String()
 		if !processed[areaName] {
@@ -637,7 +641,9 @@ func (col *promCollector) UpdateFortCount(areas []geo.AreaName, fortType string,
 }
 
 func (col *promCollector) UpdateIncidentCount(areas []geo.AreaName) {
-	processed := make(map[string]bool)
+	// One global observation, independent of overlapping geographic matches.
+	incidentCount.WithLabelValues("world").Inc()
+	processed := map[string]bool{"world": true}
 	for _, area := range areas {
 		areaName := area.String()
 		if !processed[areaName] {
