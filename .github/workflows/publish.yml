@@ -2,6 +2,7 @@ name: publish
 
 on:
   push:
+  workflow_dispatch:
   pull_request:
 
 env:
@@ -14,7 +15,7 @@ jobs:
     # fires on a fork's commits). A same-repo PR's pull_request event is
     # skipped here since its push event already runs this job — without
     # this guard every same-repo PR push would run the suite twice.
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     runs-on: ubuntu-latest
     services:
       # Schema-complete MariaDB for the pokemon round-trip tests
@@ -84,7 +85,7 @@ jobs:
     # A fork PR wouldn't have write access to secrets.GITHUB_TOKEN's
     # elevated permissions anyway; this keeps the behavior explicit rather
     # than relying on that.
-    if: github.event_name == 'push'
+    if: github.event_name != 'pull_request'
     needs: [test]
     permissions:
       contents: read
